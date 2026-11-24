@@ -2,54 +2,26 @@
 A real version of jarvis
 
 JARVIS/
-│
 ├── apps/
-│   ├── desktop/
-│   ├── mobile/
-│   └── embedded/
-│
 ├── backend/
+│   ├── api/
 │   ├── gateway/
 │   ├── orchestrator/
 │   ├── authentication/
-│   └── event_bus/
+│   ├── event_bus/
+│   └── events/
 │
 ├── engines/
 │   ├── voice/
-│   │   ├── wake_word/
-│   │   ├── vad/
-│   │   ├── stt/
-│   │   └── tts/
-│   │
 │   ├── brain/
-│   │   ├── llm/
-│   │   ├── planner/
-│   │   └── tool_router/
-│   │
 │   ├── memory/
-│   │   ├── short_term/
-│   │   ├── long_term/
-│   │   └── semantic/
-│   │
+│   ├── knowledge/
 │   ├── vision/
-│   └── actions/
+│   └── tools/
 │
-├── cpp/
-│   ├── audio/
-│   ├── vision/
-│   └── inference/
-│
+├── actions/
 ├── infrastructure/
-│   ├── docker/
-│   ├── postgres/
-│   ├── redis/
-│   └── monitoring/
-│
 ├── training/
-│   ├── datasets/
-│   ├── models/
-│   └── experiments/
-│
 ├── tests/
 ├── configs/
 └── main.py
