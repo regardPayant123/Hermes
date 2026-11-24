@@ -1,0 +1,15 @@
+{
+  "short_term": {
+    "max_records": 50
+  },
+  "long_term": {
+    "storage_path": "data/memory/long_term.json"
+  },
+  "rag": {
+    "chunker": {
+      "chunk_size": 800,
+      "overlap": 100
+    },
+    "retrieval_limit": 5
+  }
+}

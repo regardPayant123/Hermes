@@ -1,0 +1,27 @@
+{
+  "stt": {
+    "provider": "whisper",
+    "options": {
+      "model_path": "",
+      "device": "cpu",
+      "compute_type": "int8",
+      "language": "fr"
+    }
+  },
+  "tts": {
+    "provider": "piper",
+    "options": {
+      "model_path": "",
+      "config_path": "",
+      "sample_rate": 22050
+    }
+  },
+  "vad": {
+    "provider": "silero",
+    "options": {
+      "model_path": "",
+      "sample_rate": 16000,
+      "threshold": 0.5
+    }
+  }
+}

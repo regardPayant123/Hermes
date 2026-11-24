@@ -1,0 +1,26 @@
+{
+  "primary": {
+    "provider": "qwen",
+    "options": {
+      "model_path": "",
+      "tier": "light",
+      "n_ctx": 4096,
+      "n_gpu_layers": 0
+    }
+  },
+  "fallbacks": [
+    {
+      "provider": "llama",
+      "options": {
+        "model_path": "",
+        "tier": "light",
+        "n_ctx": 4096,
+        "n_gpu_layers": 0
+      }
+    }
+  ],
+  "orchestrator": {
+    "system_prompt": "Tu es Hermes, un assistant personnel intelligent, utile et concis.",
+    "history_limit": 20
+  }
+}
