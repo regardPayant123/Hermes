@@ -1,26 +1,17 @@
 {
   "primary": {
-    "provider": "qwen",
+    "provider": "llama",
     "options": {
-      "model_path": "",
+      "model_path": "models/brain/llama/light/Llama-3.2-1B-Instruct-Q4_K_M.gguf",
       "tier": "light",
       "n_ctx": 4096,
       "n_gpu_layers": 0
     }
   },
-  "fallbacks": [
-    {
-      "provider": "llama",
-      "options": {
-        "model_path": "",
-        "tier": "light",
-        "n_ctx": 4096,
-        "n_gpu_layers": 0
-      }
-    }
-  ],
+  "fallbacks": [],
   "orchestrator": {
     "system_prompt": "Tu es Hermes, un assistant personnel intelligent, utile et concis.",
-    "history_limit": 20
+    "history_limit": 20,
+    "max_tool_rounds": 4
   }
 }

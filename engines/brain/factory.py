@@ -23,7 +23,7 @@ class BrainFactory:
         return create_llm(config)
 
     @classmethod
-    def from_json(cls, path: str | Path):
+    def from_json(cls, path: str | Path, *, tools=None):
         from .orchestrator import LLMOrchestrator
 
         config = cls.load_config(path)
@@ -43,4 +43,6 @@ class BrainFactory:
             fallbacks,
             system_prompt=orchestrator_config.get("system_prompt"),
             history_limit=orchestrator_config.get("history_limit", 20),
+            tools=tools,
+            max_tool_rounds=orchestrator_config.get("max_tool_rounds", 4),
         )

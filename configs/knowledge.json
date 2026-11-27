@@ -6,6 +6,12 @@
     "storage_path": "data/memory/long_term.json"
   },
   "rag": {
+    "vector_store": {
+      "database_path": "data/rag/chunks.sqlite3",
+      "index_path": "data/rag/chunks.faiss",
+      "embedding_model": "intfloat/multilingual-e5-small",
+      "device": "cpu"
+    },
     "chunker": {
       "chunk_size": 800,
       "overlap": 100

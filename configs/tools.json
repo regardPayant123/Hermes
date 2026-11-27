@@ -1,0 +1,19 @@
+{
+  "enabled_tools": [
+    "current_time",
+    "calculator",
+    "rag_search",
+    "web_search"
+  ],
+  "web_search": {
+    "enabled": true,
+    "provider": "tavily",
+    "timeout_seconds": 12
+  },
+  "mcp": {
+    "servers": []
+  },
+  "orchestrator": {
+    "max_tool_rounds": 4
+  }
+}

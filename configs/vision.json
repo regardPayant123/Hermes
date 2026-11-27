@@ -1,0 +1,78 @@
+{
+  "stream": {
+    "enabled": true,
+    "source": 0,
+    "options": {
+      "jpeg_quality": 85
+    }
+  },
+  "object_detection": {
+    "enabled": true,
+    "provider": "ultralytics",
+    "options": {
+      "model_path": "models/vision/object_detection/yolo11n.pt",
+      "confidence": 0.25,
+      "device": null
+    }
+  },
+  "face_detection": {
+    "enabled": true,
+    "provider": "opencv_yunet",
+    "options": {
+      "model_path": "models/vision/face_detection/face_detection_yunet_2023mar.onnx",
+      "score_threshold": 0.8,
+      "nms_threshold": 0.3
+    }
+  },
+  "vlm": {
+    "enabled": true,
+    "provider": "transformers",
+    "options": {
+      "model_id": "models/vision/vlm/smolvlm-256m",
+      "device": -1,
+      "max_new_tokens": 256
+    }
+  },
+  "ocr": {
+    "enabled": true,
+    "provider": "easyocr",
+    "options": {
+      "languages": ["fr", "en"],
+      "gpu": false
+    }
+  },
+  "image_classification": {
+    "enabled": false,
+    "provider": "transformers",
+    "options": {
+      "model_id": "google/mobilenet_v2_1.0_224",
+      "device": -1,
+      "top_k": 5
+    }
+  },
+  "segmentation": {
+    "enabled": false,
+    "provider": "transformers",
+    "options": {
+      "model_id": "nvidia/segformer-b0-finetuned-ade-512-512",
+      "device": -1
+    }
+  },
+  "pose_estimation": {
+    "enabled": false,
+    "provider": "ultralytics",
+    "options": {
+      "model_path": "yolo11n-pose.pt",
+      "confidence": 0.25,
+      "device": null
+    }
+  },
+  "depth_estimation": {
+    "enabled": false,
+    "provider": "transformers",
+    "options": {
+      "model_id": "LiheYoung/depth-anything-small-hf",
+      "device": -1
+    }
+  }
+}

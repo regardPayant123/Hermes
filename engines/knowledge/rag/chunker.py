@@ -30,5 +30,7 @@ class TextChunker:
                     metadata={**document.metadata, "chunk_index": chunk_index},
                 ))
                 chunk_index += 1
+            if end == len(text):
+                break
             start = end - self.overlap
         return chunks

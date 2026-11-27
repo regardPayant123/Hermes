@@ -1,8 +1,18 @@
 {
+  "audio_input": {
+    "provider": "pulseaudio",
+    "options": {
+      "device": null,
+      "command": "parec",
+      "sample_rate": 16000,
+      "channels": 1,
+      "latency_ms": 80
+    }
+  },
   "stt": {
     "provider": "whisper",
     "options": {
-      "model_path": "",
+      "model_path": "models/voice/stt/faster-whisper-base",
       "device": "cpu",
       "compute_type": "int8",
       "language": "fr"
@@ -11,17 +21,33 @@
   "tts": {
     "provider": "piper",
     "options": {
-      "model_path": "",
-      "config_path": "",
+      "model_path": "models/voice/tts/piper/siwis-medium/fr_FR-siwis-medium.onnx",
+      "config_path": "models/voice/tts/piper/siwis-medium/fr_FR-siwis-medium.onnx.json",
       "sample_rate": 22050
     }
   },
   "vad": {
     "provider": "silero",
     "options": {
-      "model_path": "",
+      "model_path": "models/voice/vad/silero/silero_vad.jit",
       "sample_rate": 16000,
       "threshold": 0.5
+    }
+  },
+  "wake_word": {
+    "enabled": true,
+    "provider": "openwakeword",
+    "options": {
+      "model_path": "models/voice/wake_word/hey_jarvis_v0.1.onnx",
+      "melspectrogram_path": "models/voice/wake_word/melspectrogram.onnx",
+      "embedding_path": "models/voice/wake_word/embedding_model.onnx",
+      "keyword": "hey_jarvis",
+      "threshold": 0.5,
+      "sample_rate": 16000,
+      "frame_samples": 1280,
+      "cooldown_seconds": 1.5,
+      "vad_threshold": 0.0,
+      "ncpu": 1
     }
   }
 }

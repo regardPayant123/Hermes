@@ -1,9 +1,9 @@
 """Llama family provider using llama.cpp bindings."""
 
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
-from .interface import ChatMessage, LLMProvider, LLMResponse
+from .interface import ChatMessage, LLMProvider, LLMResponse, parse_tool_calls
 
 
 LLAMA_TIERS = {
@@ -21,6 +21,7 @@ class LlamaLLM(LLMProvider):
         n_ctx: int = 4096,
         n_gpu_layers: int = 0,
         chat_format: str | None = None,
+        verbose: bool = False,
     ):
         if tier not in LLAMA_TIERS:
             raise ValueError("Llama tier must be light, middle, or heavy")
@@ -30,6 +31,7 @@ class LlamaLLM(LLMProvider):
         self.n_ctx = n_ctx
         self.n_gpu_layers = n_gpu_layers
         self.chat_format = chat_format
+        self.verbose = verbose
         self._model = None
 
     def load(self):
@@ -46,8 +48,16 @@ class LlamaLLM(LLMProvider):
             n_ctx=self.n_ctx,
             n_gpu_layers=self.n_gpu_layers,
             chat_format=self.chat_format,
+            verbose=self.verbose,
         )
         return self._model
+
+    def unload(self) -> None:
+        if self._model is not None:
+            close = getattr(self._model, "close", None)
+            if close is not None:
+                close()
+            self._model = None
 
     async def generate(
         self,
@@ -56,20 +66,27 @@ class LlamaLLM(LLMProvider):
         temperature: float = 0.7,
         max_tokens: int = 512,
         stop: tuple[str, ...] = (),
+        tools: list[dict[str, Any]] | None = None,
     ) -> LLMResponse:
         self.validate_generation(temperature, max_tokens)
-        formatted = [{"role": message.role, "content": message.content} for message in messages]
+        formatted = [message.to_provider_message() for message in messages]
         model = self.load()
-        result = model.create_chat_completion(
-            messages=formatted,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stop=list(stop) or None,
-        )
+        options = {
+            "messages": formatted,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stop": list(stop) or None,
+        }
+        if tools:
+            options["tools"] = tools
+            options["tool_choice"] = "auto"
+        result = model.create_chat_completion(**options)
         choice = result["choices"][0]
-        text = choice["message"]["content"]
+        message = choice["message"]
+        text = message.get("content") or ""
         return LLMResponse(
             text=text,
             model=self.model_name,
             finish_reason=choice.get("finish_reason", "stop"),
+            tool_calls=parse_tool_calls(message.get("tool_calls", [])),
         )

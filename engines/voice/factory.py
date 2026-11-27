@@ -74,16 +74,51 @@ class VoiceProviderFactory:
             return WebRTCVAD(**options)
         raise ValueError(f"Unknown VAD provider: {provider}")
 
+    @staticmethod
+    def create_wake_word(config: dict[str, Any]):
+        provider = str(config.get("provider", "")).lower()
+        options = dict(config.get("options", {}))
+
+        if provider == "openwakeword":
+            from .wake_word.openwakeword import OpenWakeWordProvider
+            required_paths = ("model_path", "melspectrogram_path", "embedding_path")
+            missing = [key for key in required_paths if not options.get(key)]
+            if missing:
+                raise ValueError(f"openWakeWord requires options: {', '.join(missing)}")
+            return OpenWakeWordProvider(**options)
+        raise ValueError(f"Unknown wake-word provider: {provider}")
+
+    @staticmethod
+    def create_audio_input(config: dict[str, Any]):
+        provider = str(config.get("provider", "pulseaudio")).lower()
+        options = dict(config.get("options", {}))
+        if provider == "pulseaudio":
+            from .audio.pulse import PulseAudioStream
+            return PulseAudioStream(**options)
+        raise ValueError(f"Unknown audio input provider: {provider}")
+
     @classmethod
     def from_json(cls, path: str | Path):
         config = cls.load_config(path)
         stt_config = config.get("stt", {})
         tts_config = config.get("tts", {})
         vad_config = config.get("vad", {})
+        wake_word_config = config.get("wake_word")
+        audio_input_config = config.get("audio_input", {"provider": "pulseaudio", "options": {}})
         if not all(isinstance(section, dict) for section in (stt_config, tts_config, vad_config)):
             raise ValueError("stt, tts, and vad must contain JSON objects")
-        return {
+        if wake_word_config is not None and not isinstance(wake_word_config, dict):
+            raise ValueError("wake_word must contain a JSON object")
+        if not isinstance(audio_input_config, dict) or not isinstance(audio_input_config.get("options", {}), dict):
+            raise ValueError("audio_input and audio_input.options must contain JSON objects")
+        providers = {
             "stt": cls.create_stt(stt_config),
             "tts": cls.create_tts(tts_config),
             "vad": cls.create_vad(vad_config),
+            "audio_input": cls.create_audio_input(audio_input_config),
         }
+        if wake_word_config and wake_word_config.get("enabled", True):
+            providers["wake_word"] = cls.create_wake_word(wake_word_config)
+        else:
+            providers["wake_word"] = None
+        return providers

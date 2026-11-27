@@ -37,6 +37,9 @@ class WhisperSTT(STTProvider):
         )
         return self._model
 
+    def unload(self) -> None:
+        self._model = None
+
     async def transcribe(
         self,
         audio: AudioInput,

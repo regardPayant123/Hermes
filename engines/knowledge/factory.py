@@ -23,18 +23,31 @@ class KnowledgeFactory:
         short_options = config.get("short_term", {})
         long_options = config.get("long_term", {})
         rag_options = config.get("rag", {})
+        if not all(isinstance(options, dict) for options in (short_options, long_options, rag_options)):
+            raise ValueError("short_term, long_term, and rag configuration must be JSON objects")
+        vector_options = rag_options.get("vector_store", {})
+        chunker_options = rag_options.get("chunker", {})
+        if not isinstance(vector_options, dict) or not isinstance(chunker_options, dict):
+            raise ValueError("rag.vector_store and rag.chunker must be JSON objects")
 
         from .memory.short_term.buffer import BufferShortTermMemory
         from .memory.long_term.json_store import JsonLongTermMemory
         from .rag.chunker import TextChunker
         from .rag.rag import RAGPipeline
+        from .rag.vector_store import FaissSQLiteVectorStore
 
         short_term = BufferShortTermMemory(**short_options)
         long_term = JsonLongTermMemory(**long_options)
-        chunker = TextChunker(**rag_options.get("chunker", {}))
-        rag = RAGPipeline(long_term, chunker)
+        chunker = TextChunker(**chunker_options)
+        vector_store = FaissSQLiteVectorStore(**vector_options)
+        rag = RAGPipeline(
+            vector_store,
+            chunker,
+            retrieval_limit=rag_options.get("retrieval_limit", 5),
+        )
         return {
             "short_term": short_term,
             "long_term": long_term,
+            "vector_store": vector_store,
             "rag": rag,
         }

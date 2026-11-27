@@ -1,9 +1,9 @@
 """Qwen family provider using local GGUF weights through llama.cpp."""
 
 from pathlib import Path
-from typing import Iterable
+from typing import Any, Iterable
 
-from .interface import ChatMessage, LLMProvider, LLMResponse
+from .interface import ChatMessage, LLMProvider, LLMResponse, parse_tool_calls
 
 
 QWEN_TIERS = {
@@ -47,6 +47,13 @@ class QwenLLM(LLMProvider):
         )
         return self._model
 
+    def unload(self) -> None:
+        if self._model is not None:
+            close = getattr(self._model, "close", None)
+            if close is not None:
+                close()
+            self._model = None
+
     async def generate(
         self,
         messages: Iterable[ChatMessage],
@@ -54,20 +61,26 @@ class QwenLLM(LLMProvider):
         temperature: float = 0.7,
         max_tokens: int = 512,
         stop: tuple[str, ...] = (),
+        tools: list[dict[str, Any]] | None = None,
     ) -> LLMResponse:
         self.validate_generation(temperature, max_tokens)
-        formatted = [{"role": message.role, "content": message.content} for message in messages]
+        formatted = [message.to_provider_message() for message in messages]
         model = self.load()
-        result = model.create_chat_completion(
-            messages=formatted,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stop=list(stop) or None,
-        )
+        options = {
+            "messages": formatted,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stop": list(stop) or None,
+        }
+        if tools:
+            options["tools"] = tools
+            options["tool_choice"] = "auto"
+        result = model.create_chat_completion(**options)
         choice = result["choices"][0]
-        text = choice["message"]["content"]
+        message = choice["message"]
         return LLMResponse(
-            text=text,
+            text=message.get("content") or "",
             model=self.model_name,
             finish_reason=choice.get("finish_reason", "stop"),
+            tool_calls=parse_tool_calls(message.get("tool_calls", [])),
         )

@@ -1,0 +1,7 @@
+-r requirements.txt
+faster-whisper>=1.2.0,<2.0.0
+av>=11.0.0,<17.0.0
+piper-tts>=1.8.0,<2.0.0
+torch>=2.0.0
+# Linux/Python 3.13 ONNX-only install (tflite-runtime has no compatible wheel):
+# python3 -m pip install --no-deps -r requirements-wakeword.txt
