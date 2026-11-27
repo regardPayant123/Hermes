@@ -218,3 +218,58 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# AI models
+models/
+*.gguf
+*.safetensors
+*.pt
+*.pth
+*.onnx
+*.bin
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Vector DB
+vector_store/
+chroma/
+*.faiss
+
+# Logs
+*.log
+
+
+# Secrets
+.env
+.env.*
+secrets/
+config.local.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# LangChain / logs
+*.sqlite
+*.db
+
+# Cache HuggingFace
+.cache/
+huggingface/
+
+
+workspace/
+runs/
+outputs/
+artifacts/
